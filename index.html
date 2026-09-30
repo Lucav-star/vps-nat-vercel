@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VPS NAT v11.0</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+    <div class="logo">⚡ VPS NAT <span class="ver">v11.0 · Vercel</span></div>
+    <div class="stats-bar">
+        <span id="statVps">📦 0 VPS</span>
+        <span id="statIp">🌐 ...</span>
+        <span id="statTime">⏰ ...</span>
+    </div>
+</header>
+
+<div class="layout">
+    <aside class="sidebar">
+        <h3>MENU</h3>
+        <a onclick="showTab('dashboard', this)" class="active">📊 Dashboard</a>
+        <a onclick="showTab('vps', this)">🖥 VPS</a>
+        <a onclick="showTab('bulk', this)">📦 Bulk</a>
+        <a onclick="showTab('network', this)">🌐 Network</a>
+        <a onclick="showTab('security', this)">🔐 Security</a>
+        <a onclick="showTab('data', this)">📂 Data</a>
+        <a onclick="showTab('log', this)">📜 Log</a>
+    </aside>
+
+    <main>
+        <!-- DASHBOARD -->
+        <section id="tab-dashboard" class="tab active">
+            <h2>📊 Dashboard</h2>
+            <div class="grid-4">
+                <div class="stat-card"><h4>Total VPS</h4><p id="dTotal">0</p></div>
+                <div class="stat-card"><h4>Provider</h4><p>50</p></div>
+                <div class="stat-card"><h4>IP Public</h4><p id="dIp">-</p></div>
+                <div class="stat-card"><h4>Runtime</h4><p style="font-size:14px">Vercel</p></div>
+            </div>
+            <h3>🚀 Quick Actions</h3>
+            <div class="grid">
+                <button onclick="showTab('vps')">🖥 Buat VPS</button>
+                <button onclick="showTab('bulk')">📦 Bulk Create</button>
+                <button onclick="apiCall('advanced','cek_provider','out-dash')">🔍 Cek Provider</button>
+                <button onclick="apiCall('advanced','fastest','out-dash')">⚡ Cari Tercepat</button>
+                <button onclick="apiCall('vps','statistik','out-dash')">📊 Statistik</button>
+                <button onclick="apiCall('advanced','ip_public','out-dash')">🌐 Cek IP</button>
+                <button onclick="apiCall('advanced','health','out-dash')">❤️ Health</button>
+                <button onclick="apiCall('advanced','sysinfo','out-dash')">💻 Sys Info</button>
+            </div>
+            <pre id="out-dash" class="output"></pre>
+        </section>
+
+        <!-- VPS -->
+        <section id="tab-vps" class="tab">
+            <h2>🖥 Buat & Kelola VPS</h2>
+            <div class="grid">
+                <div class="card">
+                    <h3>Buat VPS</h3>
+                    <select id="provider"></select>
+                    <input id="user" placeholder="username">
+                    <input id="pass" type="password" placeholder="password">
+                    <input id="days" type="number" value="30">
+                    <button onclick="doCreate()">BUAT VPS</button>
+                </div>
+                <div class="card">
+                    <h3>Kelola</h3>
+                    <input id="delUser" placeholder="username hapus">
+                    <button onclick="doDelete()" class="danger">HAPUS</button>
+                    <input id="renewUser" placeholder="username renew">
+                    <input id="renewDays" type="number" value="30">
+                    <button onclick="doRenew()">PERPANJANG</button>
+                </div>
+            </div>
+            <pre id="out1" class="output"></pre>
+        </section>
+
+        <!-- BULK -->
+        <section id="tab-bulk" class="tab">
+            <h2>📦 Bulk Operations</h2>
+            <div class="grid">
+                <div class="card">
+                    <h3>Bulk Create</h3>
+                    <select id="bProvider"></select>
+                    <input id="bPrefix" placeholder="prefix">
+                    <input id="bJumlah" type="number" value="10">
+                    <input id="bPass" type="password" placeholder="password">
+                    <input id="bDays" type="number" value="30">
+                    <button onclick="doBulkCreate()">BULK CREATE</button>
+                </div>
+                <div class="card">
+                    <h3>Bulk Delete</h3>
+                    <input id="bPrefix2" placeholder="prefix">
+                    <input id="bJumlah2" type="number" value="10">
+                    <button onclick="doBulkDelete()" class="danger">BULK DELETE</button>
+                </div>
+            </div>
+            <pre id="out2" class="output"></pre>
+        </section>
+
+        <!-- NETWORK -->
+        <section id="tab-network" class="tab">
+            <h2>🌐 Network Tools</h2>
+            <div class="grid">
+                <div class="card"><h3>Cek Provider</h3><button onclick="apiCall('advanced','cek_provider','out3')">Jalankan</button></div>
+                <div class="card"><h3>Provider Tercepat</h3><button onclick="apiCall('advanced','fastest','out3')">Cari</button></div>
+                <div class="card"><h3>Benchmark</h3><button onclick="apiCall('advanced','benchmark','out3')">Benchmark</button></div>
+                <div class="card"><h3>Reverse DNS</h3>
+                    <input id="nIp" placeholder="IP">
+                    <button onclick="apiCall('advanced','reverse_dns','out3',{ip:val('nIp')})">Cek</button>
+                </div>
+                <div class="card"><h3>Subdomain Finder</h3>
+                    <input id="nDomain" placeholder="domain.com">
+                    <button onclick="apiCall('advanced','subdomain','out3',{domain:val('nDomain')})">Cari</button>
+                </div>
+                <div class="card"><h3>Port Check</h3>
+                    <input id="pHost" placeholder="host">
+                    <input id="pPort" type="number" placeholder="port">
+                    <button onclick="apiCall('advanced','port_check','out3',{host:val('pHost'),port:val('pPort')})">Cek</button>
+                </div>
+                <div class="card"><h3>IP Leak</h3><button onclick="apiCall('advanced','ip_leak','out3')">Cek</button></div>
+                <div class="card"><h3>Geo IP</h3>
+                    <input id="gIp" placeholder="IP">
+                    <button onclick="apiCall('advanced','geo_ip','out3',{ip:val('gIp')})">Cek</button>
+                </div>
+            </div>
+            <pre id="out3" class="output"></pre>
+        </section>
+
+        <!-- SECURITY -->
+        <section id="tab-security" class="tab">
+            <h2>🔐 Security Tools</h2>
+            <div class="grid">
+                <div class="card"><h3>Generate Password</h3>
+                    <input id="sLen" type="number" value="16">
+                    <button onclick="apiCall('advanced','gen_pass','out4',{len:val('sLen')})">Generate</button>
+                </div>
+                <div class="card"><h3>Generate UUID</h3><button onclick="apiCall('advanced','gen_uuid','out4')">Generate</button></div>
+                <div class="card"><h3>Hash MD5</h3>
+                    <input id="sText" placeholder="text">
+                    <button onclick="apiCall('advanced','hash_md5','out4',{text:val('sText')})">Hash</button>
+                </div>
+                <div class="card"><h3>Hash SHA256</h3>
+                    <input id="sText2" placeholder="text">
+                    <button onclick="apiCall('advanced','hash_sha256','out4',{text:val('sText2')})">Hash</button>
+                </div>
+                <div class="card"><h3>Base64 Encode</h3>
+                    <input id="sB64" placeholder="text">
+                    <button onclick="apiCall('advanced','b64_enc','out4',{text:val('sB64')})">Encode</button>
+                </div>
+                <div class="card"><h3>Base64 Decode</h3>
+                    <input id="sB64d" placeholder="base64">
+                    <button onclick="apiCall('advanced','b64_dec','out4',{text:val('sB64d')})">Decode</button>
+                </div>
+            </div>
+            <pre id="out4" class="output"></pre>
+        </section>
+
+        <!-- DATA -->
+        <section id="tab-data" class="tab">
+            <h2>📂 Data VPS</h2>
+            <button onclick="loadData()">🔄 Refresh</button>
+            <input id="searchData" placeholder="🔎 Cari..." oninput="loadData()" style="max-width:300px;display:inline-block;padding:9px;background:#0a0e14;border:1px solid #2a2f3a;border-radius:5px;color:#fff;font-family:inherit">
+            <div id="dataList" style="margin-top:14px"></div>
+        </section>
+
+        <!-- LOG -->
+        <section id="tab-log" class="tab">
+            <h2>📜 Activity Log</h2>
+            <button onclick="apiCall('vps','log','logBox')">🔄 Refresh</button>
+            <pre id="logBox" class="output"></pre>
+        </section>
+    </main>
+</div>
+
+<footer>© 2026 VPS NAT v11.0 · Deployed on Vercel</footer>
+
+<script>
+const PROVIDERS = [
+"https://api.sshkit.org","https://api.sshstores.net","https://api.sshmax.net",
+"https://api.fastssh.com","https://api.vpnjantit.com","https://api.sshudp.com",
+"https://api.zanderz.net","https://api.hostssh.net","https://api.sshdropbear.net",
+"https://api.ssh-j.com","https://api.tunnelbear.net","https://api.sshinfinity.net",
+"https://api.ssh-free.net","https://api.vpsfree.net","https://api.natvps.com",
+"https://api.sshagan.net","https://api.sshkuy.net","https://api.sshbooster.net",
+"https://api.sshpremium.net","https://api.sshmurah.net","https://api.sshvip.net",
+"https://api.sshpro.net","https://api.sshgratis.net","https://api.sshunlimited.net",
+"https://api.sshserver.net","https://api.sshcepat.net","https://api.sshgaming.net",
+"https://api.sshhost.net","https://api.sshcloud.net","https://api.sshmaxpro.net",
+"https://api.sshtunnel.net","https://api.sshzone.net","https://api.sshland.net",
+"https://api.sshworld.net","https://api.sshlink.net","https://api.sshgate.net",
+"https://api.sshcore.net","https://api.sshnet.net","https://api.sshfast.net",
+"https://api.sshprime.net","https://api.sshmaster.net","https://api.sshking.net",
+"https://api.sshlegend.net","https://api.sshultra.net","https://api.sshultrapro.net",
+"https://api.sshpremiumpro.net","https://api.sshcheap.net","https://api.sshpremiumvip.net",
+"https://api.sshroyal.net","https://api.sshsultan.net"
+];
+
+// Isi dropdown
+function fillProviders() {
+    const opts = PROVIDERS.map((u,i) => `<option value="${i+1}">${i+1}. ${u}</option>`).join('');
+    document.getElementById('provider').innerHTML = opts;
+    document.getElementById('bProvider').innerHTML = opts;
+}
+
+function val(id) { return document.getElementById(id)?.value || ''; }
+
+async function apiCall(route, act, targetId, params) {
+    const el = document.getElementById(targetId);
+    if (el) el.innerHTML = '<span class="typing">Memproses</span>';
+    try {
+        const r = await fetch(`/api/${route}?act=${act}`, {
+            method: 'POST',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify(params || {})
+        });
+        const d = await r.json();
+        if (el) el.textContent = typeof d === 'object' ? JSON.stringify(d, null, 2) : d;
+        if (['create','delete','bulk_create'].includes(act)) setTimeout(loadDash, 500);
+    } catch(e) {
+        if (el) el.textContent = 'Error: ' + e.message;
+    }
+}
+
+function doCreate() {
+    apiCall('vps','create','out1', {
+        provider: val('provider'), user: val('user'), pass: val('pass'), days: val('days')
+    });
+}
+function doDelete() {
+    if (!confirm('Yakin?')) return;
+    apiCall('vps','delete','out1', {user: val('delUser')});
+}
+function doRenew() {
+    apiCall('vps','renew','out1', {user: val('renewUser'), days: val('renewDays')});
+}
+function doBulkCreate() {
+    apiCall('vps','bulk_create','out2', {
+        provider: val('bProvider'), prefix: val('bPrefix'),
+        jumlah: val('bJumlah'), pass: val('bPass'), days: val('bDays')
+    });
+}
+function doBulkDelete() {
+    if (!confirm('Yakin?')) return;
+    apiCall('vps','bulk_delete','out2', {prefix: val('bPrefix2'), jumlah: val('bJumlah2')});
+}
+
+async function loadData() {
+    const r = await fetch('/api/vps?act=list');
+    const d = await r.json();
+    const el = document.getElementById('dataList');
+    const q = (document.getElementById('searchData')?.value || '').toLowerCase();
+    el.innerHTML = '';
+    const arr = d.list || d;
+    if (!Array.isArray(arr) || arr.length === 0) {
+        el.innerHTML = '<p style="color:#6b7280">Belum ada data.</p>';
+        return;
+    }
+    arr.filter(v => !q || (v.username||'').toLowerCase().includes(q)).forEach(v => {
+        el.innerHTML += `<div class="vps-item">
+            <div>
+                <b>${v.username || '-'}</b><br>
+                <small>Host: ${v.host || '-'} | Port: ${v.port || '-'} | Exp: ${v.expired || '-'}</small><br>
+                <small>Provider: ${v.provider || '-'}</small>
+            </div>
+            <button class="btn-del" onclick="if(confirm('Hapus?'))apiCall('vps','delete','out1',{user:'${v.username}'}).then(()=>loadData())">🗑</button>
+        </div>`;
+    });
+}
+
+async function loadDash() {
+    const r = await fetch('/api/vps?act=statistik', {method:'POST', headers:{'Content-Type':'application/json'}, body:'{}'});
+    const d = await r.json();
+    document.getElementById('dTotal').textContent = d.total_vps || 0;
+    document.getElementById('dIp').textContent = d.ip_public || '-';
+    document.getElementById('statVps').textContent = '📦 ' + (d.total_vps||0) + ' VPS';
+    document.getElementById('statIp').textContent = '🌐 ' + (d.ip_public||'-');
+    document.getElementById('statTime').textContent = '⏰ ' + new Date().toLocaleTimeString('id-ID');
+}
+
+function showTab(name, el) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
+    document.getElementById('tab-' + name)?.classList.add('active');
+    if (el) el.classList.add('active');
+    else event?.target?.classList?.add('active');
+    if (name === 'data') loadData();
+    if (name === 'log') apiCall('vps','log','logBox');
+    if (name === 'dashboard') loadDash();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    fillProviders();
+    loadDash();
+    setInterval(loadDash, 30000);
+});
+</script>
+</body>
+</html>
